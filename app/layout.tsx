@@ -1,0 +1,65 @@
+import type { Metadata } from "next";
+import "./globals.css";
+
+export const metadata: Metadata =
+{
+	title:
+	{
+		default: "Walletly — 42 Wallet Tracker",
+		template: "%s | Walletly",
+	},
+	description: "Track your 42 Network wallet, set your goal, and see exactly how many evaluations you need to reach it.",
+	keywords: ["42 network", "wallet tracker", "evaluation points", "42 school", "student dashboard"],
+	authors: [{ name: "Youbella" }],
+	creator: "Youbella",
+
+	metadataBase: new URL("https://walletly.app"),
+
+	icons:
+	{
+		icon: "/walletlyLogo.svg",
+		shortcut: "/walletlyLogo.svg",
+		apple: "/walletlyLogo.svg",
+	},
+
+	openGraph:
+	{
+		title: "Walletly — 42 Wallet Tracker",
+		description: "Track your 42 Network wallet, set your goal, and see exactly how many evaluations you need to reach it.",
+		url: "https://walletly.app",
+		siteName: "Walletly",
+		locale: "en_US",
+		type: "website",
+		images:
+			[
+				{
+					url: "/walletlyLogo.svg",
+					width: 1200,
+					height: 630,
+					alt: "Walletly — 42 Wallet Tracker",
+				},
+			],
+	},
+
+	twitter:
+	{
+		card: "summary_large_image",
+		title: "Walletly — 42 Wallet Tracker",
+		description: "Track your 42 Network wallet and hit your goal.",
+		images: ["/walletlyLogo.svg"],
+	},
+
+	robots:
+	{
+		index: true,
+		follow: true,
+	},
+}
+
+export default function RootLayout({ children }: LayoutProps<"/">) {
+	return (
+		<html lang="en">
+			<body>{children}</body>
+		</html>
+	);
+}

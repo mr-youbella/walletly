@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 92" width="108" height="92">
+	<defs>
+		<linearGradient id="walletlyIconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+			<stop offset="0%" stop-color="#f88181" />
+			<stop offset="100%" stop-color="#ee2222" />
+		</linearGradient>
+	</defs>
+	<rect x="0" y="8" width="92" height="68" rx="18" fill="url(#walletlyIconGradient)" />
+	<path d="M0 30 H92 V26 A18 18 0 0 0 74 8 H18 A18 18 0 0 0 0 26 Z" fill="#ffffff" fill-opacity="0.15" />
+	<circle cx="66" cy="48" r="9" fill="#0a0b10" />
+	<circle cx="66" cy="48" r="4" fill="url(#walletlyIconGradient)" />
+</svg>
