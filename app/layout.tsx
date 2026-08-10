@@ -17,9 +17,9 @@ export const metadata: Metadata =
 
 	icons:
 	{
-		icon: "/walletlyLogo.svg",
-		shortcut: "/walletlyLogo.svg",
-		apple: "/walletlyLogo.svg",
+		icon: "/walletlyLogo.png",
+		shortcut: "/walletlyLogo.png",
+		apple: "/walletlyLogo.png",
 	},
 
 	openGraph:
@@ -33,7 +33,7 @@ export const metadata: Metadata =
 		images:
 			[
 				{
-					url: "/walletlyLogo.svg",
+					url: "/walletlyLogo.png",
 					width: 1200,
 					height: 630,
 					alt: "Walletly — 42 Wallet Tracker",
@@ -46,7 +46,7 @@ export const metadata: Metadata =
 		card: "summary_large_image",
 		title: "Walletly — 42 Wallet Tracker",
 		description: "Track your 42 Network wallet and hit your goal.",
-		images: ["/walletlyLogo.svg"],
+		images: ["/walletlyLogo.png"],
 	},
 
 	robots:

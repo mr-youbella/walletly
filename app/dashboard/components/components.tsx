@@ -1,16 +1,13 @@
-import { Target, LogOut, Sparkles } from "lucide-react"
+import { Target, LogOut, Sparkles, ShieldIcon } from "lucide-react"
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar"
 import Image from "next/image"
-import { Student } from "../types/types"
-import { useRouter } from "next/navigation";
+import { Student } from "../../../lib/types/types"
+import Link from "next/link";
 
-export function Header(props: {student: Student}) {
-	const route = useRouter();
-	const student = props.student;
-	
-	function logOut()
-	{
+export function Header(props: { login: string }) {
+	const login = props.login;
 
+	function logOut() {
 		localStorage.clear();
 		window.location.href = "/api/auth/logout";
 	}
@@ -31,6 +28,10 @@ export function Header(props: {student: Student}) {
 			</div>
 
 			<div className="flex items-center gap-4">
+				<Link href="/admin" className={`flex items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-white/70 transition-all hover:border-yellow-400/30 hover:bg-yellow-500/10 hover:text-yellow-400 cursor-pointer ${login.toLowerCase() !== "youbella" ? "hidden" : ""}`}>
+					<ShieldIcon size={14} />
+					Admin
+				</Link>
 				<button onClick={logOut} className="flex items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-white/70 transition-all hover:border-red-400/30 hover:bg-red-500/10 hover:text-red-400 cursor-pointer">
 					<LogOut size={14} />
 					Logout
@@ -40,24 +41,28 @@ export function Header(props: {student: Student}) {
 	)
 }
 
-export function WelcomeBanner(props: {student: Student}) {
+export function WelcomeBanner(props: { student: Student }) {
 
 	const student = props.student;
 
 	return (
-		<div className="flex items-center gap-4 p-4 rounded-2xl bg-linear-to-r from-red-500/5 to-orange-500/5 border border-white/5">
-			<div className="ring-4 ring-red-500/20 rounded-2xl">
-				<img
+		<div className="flex items-center gap-3 p-4 rounded-2xl bg-linear-to-r from-red-500/5 to-orange-500/5 border border-white/5 sm:gap-4 sm:p-5">
+			<div className="shrink-0 ring-4 ring-red-500/20 rounded-2xl">
+				<Image
 					src={student.avatarUrl}
 					alt={student.fullName}
-					className="h-16 w-16 rounded-2xl border border-white/10 object-cover"
+					width={64}
+					height={64}
+					className="h-12 w-12 rounded-2xl border border-white/10 object-cover sm:h-16 sm:w-16"
 				/>
 			</div>
-			<div>
-				<h1 className="text-[26px] font-bold">
+			<div className="min-w-0">
+				<h1 className="text-xl font-bold leading-tight sm:text-2xl">
 					Welcome back, {student.fullName.split(" ")[0]} <span aria-hidden="true">👋</span>
 				</h1>
-				<p className="text-sm text-white/40">@{student.login} · {student.campus}</p>
+				<p className="mt-1 truncate text-xs text-white/40 sm:text-sm">
+					@{student.login} · {student.campus}
+				</p>
 			</div>
 		</div>
 	)
@@ -201,21 +206,3 @@ export function ConversionNote({ neededEvaluations, remaining, target }: { neede
 	)
 }
 
-export function FooterStats({ progress, remaining, neededEvaluations }: { progress: number; remaining: number; neededEvaluations: number }) {
-	return (
-		<div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
-			<div className="group rounded-xl border border-white/5 bg-white/2 py-4 text-center transition-all hover:border-red-500/20 hover:bg-red-500/5">
-				<p className="text-lg font-bold bg-linear-to-r from-[#DC2626] to-[#F97316] bg-clip-text text-transparent">{Math.round(progress)}%</p>
-				<p className="text-xs text-white/40">Done</p>
-			</div>
-			<div className="group rounded-xl border border-white/5 bg-white/2 py-4 text-center transition-all hover:border-orange-500/20 hover:bg-orange-500/5">
-				<p className="text-lg font-bold text-[#FB923C]">{remaining.toLocaleString()} ₳</p>
-				<p className="text-xs text-white/40">Remaining</p>
-			</div>
-			<div className="group rounded-xl border border-white/5 bg-white/2 py-4 text-center transition-all hover:border-pink-500/20 hover:bg-pink-500/5">
-				<p className="text-lg font-bold text-[#F472B6]">{neededEvaluations}</p>
-				<p className="text-xs text-white/40">Evals needed</p>
-			</div>
-		</div>
-	)
-}

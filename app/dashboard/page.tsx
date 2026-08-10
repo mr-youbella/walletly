@@ -1,8 +1,8 @@
 "use client"
 import { useEffect, useMemo, useState } from "react"
 import { Wallet, Star, TrendingUp, Zap, Calculator, ChevronRight } from "lucide-react"
-import { Student } from "./types/types"
-import { ConversionNote, FooterStats, GoalInputCard, Header, ProgressRing, ResultCard, StatCard, WalletProgressBar, WelcomeBanner } from "./components/components"
+import { Student } from "../../lib/types/types"
+import { ConversionNote, GoalInputCard, Header, ProgressRing, ResultCard, StatCard, WalletProgressBar, WelcomeBanner } from "./components/components"
 import { useRouter } from "next/navigation"
 
 const CONVERSION_RATE = 5
@@ -17,7 +17,7 @@ function computeGoal(current: number, target: number) {
 
 export default function WalletDashboard() {
 	const route = useRouter();
-	const [student, setStudent] = useState<Student>({ login: "loading...", fullName: "loading...", avatarUrl: "https://image.winudf.com/v2/image1/Y29tLmxpbmtrYWRlci5pbnRyYTQyX2ljb25fMTY3MzMzNzI4Ml8wOTQ/icon.png?w=280&fakeurl=1", campus: "42 the network", wallet: 0, evaluationPoints: 0,});
+	const [student, setStudent] = useState<Student>({ login: "loading...", fullName: "loading...", avatarUrl: "/42Logo.png", campus: "42 the network", wallet: 0, evaluationPoints: 0, });
 	const [targetInput, setTargetInput] = useState("0");
 
 	useEffect(() => {
@@ -43,20 +43,53 @@ export default function WalletDashboard() {
 		loadStudent();
 	}, []);
 	useEffect(() => {
-		const savedTarget = localStorage.getItem("walletly_target");
+		async function loadTarget() {
+			try {
+				const response = await fetch("/api/target");
 
-		if (savedTarget) {
-			setTarget(Number(savedTarget));
-			setTargetInput(savedTarget);
+				if (response.ok) {
+					const data = await response.json();
+
+					if (data.target > 0) {
+						setTarget(data.target);
+						setTargetInput(data.target.toString());
+						return;
+					}
+				}
+			}
+			catch (error) {
+				console.error("Failed to fetch target from database:", error);
+			}
+
+			const savedTarget = localStorage.getItem("walletly_target");
+
+			if (savedTarget) {
+				setTarget(Number(savedTarget));
+				setTargetInput(savedTarget);
+			}
 		}
+
+		loadTarget();
 	}, []);
 
 	const [target, setTarget] = useState(Number(targetInput.replace(/[^0-9]/g, "")) || 0);
 
-	function changeTarget() {
+	async function changeTarget() {
 		const numericTarget = Number(targetInput.replace(/[^0-9]/g, "")) || 0;
+
 		setTarget(numericTarget);
 		localStorage.setItem("walletly_target", numericTarget.toString());
+
+		try {
+			await fetch("/api/target", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ target: numericTarget }),
+			});
+		}
+		catch (error) {
+			console.error("Failed to save target:", error);
+		}
 	}
 
 	const { remaining, neededEvaluations, progress } = useMemo(() => computeGoal(student.wallet, target), [target, student]);
@@ -67,7 +100,7 @@ export default function WalletDashboard() {
 			<div className="pointer-events-none absolute -top-40 -right-40 h-96 w-96 rounded-full bg-red-500/10 blur-3xl" />
 			<div className="pointer-events-none absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-orange-500/5 blur-3xl" />
 
-			<Header student={student} />
+			<Header login={student.login} />
 
 			<main className="relative mx-auto max-w-6xl px-6 py-10">
 				<WelcomeBanner student={student} />
@@ -136,7 +169,6 @@ export default function WalletDashboard() {
 
 				<ConversionNote neededEvaluations={neededEvaluations} remaining={remaining} target={target} />
 
-				<FooterStats progress={progress} remaining={remaining} neededEvaluations={neededEvaluations} />
 			</main>
 		</div>
 	)
