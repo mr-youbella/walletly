@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(request: NextRequest) {
+	console.log("CLIENT_ID exists:", !!process.env.FT_CLIENT_ID);
+	console.log("SECRET exists:", !!process.env.FT_CLIENT_SECRET);
+	console.log("APP_URL:", process.env.NEXT_PUBLIC_APP_URL);
 	const code = request.nextUrl.searchParams.get("code");
 
 	if (!code)
