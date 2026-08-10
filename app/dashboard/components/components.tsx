@@ -2,9 +2,18 @@ import { Target, LogOut, Sparkles } from "lucide-react"
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar"
 import Image from "next/image"
 import { Student } from "../types/types"
+import { useRouter } from "next/navigation";
 
-export function Header(props: {demoStudent: Student}) {
-	const demoStudent = props.demoStudent;
+export function Header(props: {student: Student}) {
+	const route = useRouter();
+	const student = props.student;
+	
+	function logOut()
+	{
+
+		localStorage.clear();
+		window.location.href = "/api/auth/logout";
+	}
 
 	return (
 		<header className="relative flex items-center justify-between border-b border-white/5 px-8 py-5 backdrop-blur-sm bg-black/20">
@@ -22,18 +31,7 @@ export function Header(props: {demoStudent: Student}) {
 			</div>
 
 			<div className="flex items-center gap-4">
-				<div className="text-right leading-tight">
-					<p className="text-sm font-semibold text-white/90">{demoStudent.fullName}</p>
-					<p className="text-xs text-white/40">@{demoStudent.login}</p>
-				</div>
-				<div className="ring-2 ring-red-500/30 rounded-full">
-					<img
-						src={demoStudent.avatarUrl}
-						alt={demoStudent.fullName}
-						className="h-10 w-10 rounded-full object-cover"
-					/>
-				</div>
-				<button className="flex items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-white/70 transition-all hover:border-red-400/30 hover:bg-red-500/10 hover:text-red-400 cursor-pointer">
+				<button onClick={logOut} className="flex items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-white/70 transition-all hover:border-red-400/30 hover:bg-red-500/10 hover:text-red-400 cursor-pointer">
 					<LogOut size={14} />
 					Logout
 				</button>
@@ -42,24 +40,24 @@ export function Header(props: {demoStudent: Student}) {
 	)
 }
 
-export function WelcomeBanner(props: {demoStudent: Student}) {
+export function WelcomeBanner(props: {student: Student}) {
 
-	const demoStudent = props.demoStudent;
+	const student = props.student;
 
 	return (
 		<div className="flex items-center gap-4 p-4 rounded-2xl bg-linear-to-r from-red-500/5 to-orange-500/5 border border-white/5">
 			<div className="ring-4 ring-red-500/20 rounded-2xl">
 				<img
-					src={demoStudent.avatarUrl}
-					alt={demoStudent.fullName}
+					src={student.avatarUrl}
+					alt={student.fullName}
 					className="h-16 w-16 rounded-2xl border border-white/10 object-cover"
 				/>
 			</div>
 			<div>
 				<h1 className="text-[26px] font-bold">
-					Welcome back, {demoStudent.fullName.split(" ")[0]} <span aria-hidden="true">👋</span>
+					Welcome back, {student.fullName.split(" ")[0]} <span aria-hidden="true">👋</span>
 				</h1>
-				<p className="text-sm text-white/40">@{demoStudent.login} · 42 Network</p>
+				<p className="text-sm text-white/40">@{student.login} · {student.campus}</p>
 			</div>
 		</div>
 	)
@@ -97,7 +95,7 @@ export function GoalInputCard({ value, onChange }: { value: string; onChange: (v
 			<div className="mt-3 flex items-baseline gap-2 rounded-xl bg-black/40 px-4 py-2 border border-white/5 focus-within:border-red-500/30 transition-all">
 				<input
 					value={value}
-					onChange={(e) => onChange(e.target.value)}
+					onChange={(e) => onChange(e.target.value.replace(/[^0-9]/g, ""))}
 					inputMode="numeric"
 					className="w-full bg-transparent text-[28px] font-bold outline-none text-white"
 				/>
@@ -189,14 +187,14 @@ export function WalletProgressBar({ current, target, progress }: { current: numb
 	)
 }
 
-export function ConversionNote({ neededEvaluations, remaining }: { neededEvaluations: number; remaining: number }) {
+export function ConversionNote({ neededEvaluations, remaining, target }: { neededEvaluations: number; remaining: number, target: number }) {
 	return (
 		<div className="mt-4 flex items-start gap-2.5 rounded-xl border border-red-500/10 bg-linear-to-r from-red-500/5 to-orange-500/5 px-4 py-3.5 sm:px-5 sm:py-4">
 			<Sparkles size={16} className="mt-0.5 shrink-0 text-[#F87171]" />
 			<p className="text-[13px] leading-relaxed text-white/60 sm:text-sm">
 				You need <strong className="font-semibold text-[#F87171]">{neededEvaluations} evaluations</strong> to earn{" "}
 				<strong className="font-semibold text-white">{remaining.toLocaleString()} ₳</strong> more and reach your goal of{" "}
-				<strong className="font-semibold text-white">1,400 ₳</strong>. Each evaluation converts to{" "}
+				<strong className="font-semibold text-white">{target} ₳</strong>. Each evaluation converts to{" "}
 				<span className="font-semibold text-[#F97316]">5 ₳</span>.
 			</p>
 		</div>

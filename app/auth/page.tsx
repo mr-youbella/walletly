@@ -1,8 +1,27 @@
 "use client"
 import { Wallet, ArrowRight, Sparkles } from "lucide-react"
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react"
 
 export default function LoginPage() {
+	const route = useRouter();
+	useEffect(() => {
+		async function loadStudent() {
+			try {
+				const response = await fetch("/api/auth/42/student");
+
+				if (response.ok) {
+					route.replace("/dashboard");
+					return;
+				}
+			}
+			catch (error) { }
+		}
+
+		loadStudent();
+	}, []);
+
 	function handleLogin() {
 		window.location.href = "/api/auth/42";
 	}
@@ -101,7 +120,7 @@ export default function LoginPage() {
 					</button>
 
 					<p className="mt-4 text-[11px] text-white/20">
-						By continuing, you agree to our Terms of Service
+						By continuing, you agree to our <Link href="/terms" className="underline cursor-pointer">Terms of Service</Link>
 					</p>
 				</div>
 			</div>
