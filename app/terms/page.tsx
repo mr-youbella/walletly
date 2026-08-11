@@ -34,7 +34,7 @@ export default function TermsPage() {
 					<h1 className="text-2xl font-bold">Terms of Service</h1>
 				</div>
 
-				<p className="text-sm text-white/40">Last updated: August 10, 2026</p>
+				<p className="text-sm text-white/40">Last updated: August 11, 2026</p>
 
 				<div className="mt-8 space-y-8 text-sm leading-relaxed text-white/60">
 					<section>
@@ -61,8 +61,11 @@ export default function TermsPage() {
 						<h2 className="mb-2 text-base font-semibold text-white">3. Data We Store</h2>
 						<p>
 							Your session token is stored in a secure, httpOnly cookie and used only to
-							fetch your profile from the 42 API. Your Wallet goal is stored locally in
-							your browser and is never sent to any server we control.
+							fetch your profile from the 42 API. We also store your 42 login, the date
+							of your first and most recent sign-in, and your Wallet goal in our database
+							to keep your progress synced across devices. We never store your 42 password,
+							and this data is only used to power your Walletly experience — never sold
+							or shared with third parties.
 						</p>
 					</section>
 
