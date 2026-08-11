@@ -13,7 +13,7 @@ export const metadata: Metadata =
 	authors: [{ name: "Youbella" }],
 	creator: "Youbella",
 
-	metadataBase: new URL("https://walletly.app"),
+	metadataBase: new URL("https://42walletly.vercel.app"),
 
 	icons:
 	{
@@ -26,7 +26,7 @@ export const metadata: Metadata =
 	{
 		title: "Walletly — 42 Wallet Tracker",
 		description: "Track your 42 Network wallet, set your goal, and see exactly how many evaluations you need to reach it.",
-		url: "https://walletly.app",
+		url: "https://42walletly.vercel.app",
 		siteName: "Walletly",
 		locale: "en_US",
 		type: "website",
