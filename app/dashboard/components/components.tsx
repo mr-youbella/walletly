@@ -90,7 +90,7 @@ export function StatCard({ label, value, unit, icon, iconColor, barColor }: { la
 
 export function GoalInputCard({ value, onChange }: { value: string; onChange: (v: string) => void }) {
 	return (
-		<div className="group rounded-2xl border border-white/5 bg-linear-to-br from-red-500/5 to-transparent p-6 transition-all hover:border-red-500/20">
+		<div className="group col-span-full md:col-span-1 rounded-2xl border border-white/5 bg-linear-to-br from-red-500/5 to-transparent p-3 sm:p-6 transition-all hover:border-red-500/20">
 			<div className="flex items-start justify-between">
 				<p className="text-xs font-semibold uppercase tracking-wider text-white/40">Wallet goal</p>
 				<div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-500/15 text-[#F87171]">
@@ -130,7 +130,7 @@ export function ResultCard({ label, value, unit, icon, iconColor, iconBg, barCol
 
 export function ProgressRing({ progress, current, target }: { progress: number; current: number; target: number }) {
 	return (
-		<div className="flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/2 p-6 transition-all hover:border-white/10">
+		<div className="flex col-span-full md:col-span-1 flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/2 p-6 transition-all hover:border-white/10">
 			<svg width="0" height="0">
 				<defs>
 					<linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
