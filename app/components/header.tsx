@@ -19,24 +19,26 @@ export function Header(props: { login: string; streak?: number }) {
 	return (
 		<>
 			<header className="relative flex items-center justify-between border-b border-white/5 px-4 py-4 backdrop-blur-sm bg-black/20 sm:px-8 sm:py-5">
-				<Link href="/dashboard" className="flex items-center gap-3">
-					<div className="flex h-9 w-9 items-center justify-center rounded-xl shadow-lg shadow-indigo-500/20">
-						<Image
-							src="/walletlyLogo.svg"
-							alt="Walletly"
-							width={36}
-							height={36}
-							className="h-full w-full object-contain ml-1"
-						/>
-					</div>
-					<span className="text-[17px] font-bold bg-linear-to-r from-[#DC2626] to-[#F97316] bg-clip-text text-transparent">Walletly</span>
+				<div className="flex gap-4 items-center">
+					<Link href="/dashboard" className="flex items-center gap-3">
+						<div className="flex h-9 w-9 items-center justify-center rounded-xl shadow-lg shadow-indigo-500/20">
+							<Image
+								src="/walletlyLogo.svg"
+								alt="Walletly"
+								width={36}
+								height={36}
+								className="h-full w-full object-contain ml-1"
+							/>
+						</div>
+						<span className="text-[17px] font-bold bg-linear-to-r from-[#DC2626] to-[#F97316] bg-clip-text text-transparent">Walletly</span>
+					</Link>
 					{streak > 0 && (
 						<span className="flex items-center gap-1 rounded-full border border-orange-500/20 bg-orange-500/10 px-2.5 py-1 text-xs font-bold text-orange-400">
 							<Flame size={12} />
 							{streak}
 						</span>
 					)}
-				</Link>
+				</div>
 
 				<div className="hidden items-center gap-4 sm:flex">
 					<Link href="/leaderboard" className="flex items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-white/70 transition-all hover:border-amber-400/30 hover:bg-amber-500/10 hover:text-amber-400 cursor-pointer">

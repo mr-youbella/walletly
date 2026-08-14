@@ -60,10 +60,10 @@ export default function TermsPage() {
 						<p>
 							Your session token is stored in a secure, httpOnly cookie and used only to
 							fetch your profile from the 42 API. We also store your 42 login, the date
-							of your first and most recent sign-in, and your Wallet goal in our database
-							to keep your progress synced across devices. We never store your 42 password,
-							and this data is only used to power your Walletly experience — never sold
-							or shared with third parties.
+							of your first and most recent sign-in, your daily login streak, and your
+							Wallet goal in our database to keep your progress synced across devices.
+							We never store your 42 password, and this data is only used to power your
+							Walletly experience — never sold or shared with third parties.
 						</p>
 					</section>
 
