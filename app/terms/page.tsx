@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import Image from "next/image";
+import { Wallet, ArrowLeft } from "lucide-react";
 
 export const metadata =
 {
@@ -9,7 +8,11 @@ export const metadata =
 
 export default function TermsPage() {
 	return (
-		<div className="relative min-h-screen w-full bg-[#0a0b10] px-6 py-16 text-white">
+		<div className="relative min-h-screen w-full overflow-hidden bg-linear-to-br from-[#0a0b10] via-[#0f0f1a] to-[#1a0f0f] px-6 py-16 text-white">
+
+			<div className="pointer-events-none absolute -top-40 -right-40 h-96 w-96 rounded-full bg-red-500/20 blur-3xl" />
+			<div className="pointer-events-none absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-orange-500/10 blur-3xl" />
+
 			<div className="mx-auto max-w-2xl">
 				<Link
 					href="/"
@@ -22,19 +25,14 @@ export default function TermsPage() {
 				<div className="mb-10 flex items-center gap-3">
 					<div
 						className="flex h-9 w-9 items-center justify-center rounded-xl"
+						style={{ background: "linear-gradient(135deg, #4a0000 0%, #c1121f 100%)" }}
 					>
-						<Image
-							src="/walletlyLogo.svg"
-							alt="Walletly"
-							width={36}
-							height={36}
-							className="h-full w-full object-contain ml-1"
-						/>
+						<Wallet size={18} />
 					</div>
 					<h1 className="text-2xl font-bold">Terms of Service</h1>
 				</div>
 
-				<p className="text-sm text-white/40">Last updated: August 11, 2026</p>
+				<p className="text-sm text-white/40">Last updated: August 14, 2026</p>
 
 				<div className="mt-8 space-y-8 text-sm leading-relaxed text-white/60">
 					<section>
@@ -70,7 +68,19 @@ export default function TermsPage() {
 					</section>
 
 					<section>
-						<h2 className="mb-2 text-base font-semibold text-white">4. No Warranty</h2>
+						<h2 className="mb-2 text-base font-semibold text-white">4. Leaderboard</h2>
+						<p>
+							Walletly includes a leaderboard that shows your 42 login and Wallet points
+							to other signed-in students, ranked from highest to lowest. This is meant to
+							be a light, friendly way to see how you compare with peers. The Wallet value
+							shown reflects your balance at your most recent sign-in, not necessarily your
+							current balance. If you&apos;d rather not appear on the leaderboard, contact
+							the developer to have your entry excluded.
+						</p>
+					</section>
+
+					<section>
+						<h2 className="mb-2 text-base font-semibold text-white">5. No Warranty</h2>
 						<p>
 							Walletly is provided &quot;as is,&quot; with no guarantee of accuracy. Wallet
 							and evaluation figures are pulled directly from the 42 API and may not always
@@ -80,7 +90,7 @@ export default function TermsPage() {
 					</section>
 
 					<section>
-						<h2 className="mb-2 text-base font-semibold text-white">5. Changes</h2>
+						<h2 className="mb-2 text-base font-semibold text-white">6. Changes</h2>
 						<p>
 							These terms may be updated as the project evolves. Continued use of Walletly
 							after changes means you accept the updated terms.
@@ -88,10 +98,9 @@ export default function TermsPage() {
 					</section>
 
 					<section>
-						<h2 className="mb-2 text-base font-semibold text-white">6. Contact</h2>
+						<h2 className="mb-2 text-base font-semibold text-white">7. Contact</h2>
 						<p>
-							Questions or concerns about Walletly? Reach out to the developer through your
-							42 campus or the project&apos;s repository.
+							Do you have any questions or concerns about Walletly? Contact the developer via <a href="https://discordapp.com/users/518135329509605380" target="_blank" className="text-[#5865f2] cursor-pointer">Discord</a>.
 						</p>
 					</section>
 				</div>

@@ -44,11 +44,11 @@ export async function GET(request: NextRequest) {
 
 	try {
 		await pool.query(
-			`INSERT INTO logins (login)
-			 VALUES ($1)
-			 ON CONFLICT (login)
-			 DO UPDATE SET last_login_at = NOW()`,
-			[me.login]
+			`INSERT INTO logins (login, wallet)
+		 	VALUES ($1, $2)
+		 	ON CONFLICT (login)
+		 	DO UPDATE SET last_login_at = NOW(), wallet = $2`,
+			[me.login, me.wallet]
 		);
 	}
 	catch (error) {
