@@ -42,21 +42,27 @@ export async function GET(request: NextRequest) {
 	if (typeof me.login !== "string" || me.login.length === 0 || me.login.length > 50)
 		return NextResponse.redirect(new URL("/auth?error=invalid_profile", request.url));
 
+	const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
 	try {
 		await pool.query(
-			`INSERT INTO logins (login, wallet, streak_count, last_streak_date)
-			 VALUES ($1, $2, 1, CURRENT_DATE)
-			 ON CONFLICT (login)
-			 DO UPDATE SET
+			`
+			INSERT INTO logins ( login, wallet, timezone, streak_count, last_streak_date)
+			VALUES ($1, $2, $3, 1, (NOW() AT TIME ZONE $3)::date)
+			ON CONFLICT (login)
+			DO UPDATE
+			SET
+				wallet = EXCLUDED.wallet,
+				timezone = EXCLUDED.timezone,
 				last_login_at = NOW(),
-				wallet = $2,
 				streak_count = CASE
-					WHEN logins.last_streak_date = CURRENT_DATE THEN logins.streak_count
-					WHEN logins.last_streak_date = CURRENT_DATE - 1 THEN logins.streak_count + 1
+					WHEN logins.last_streak_date = EXCLUDED.last_streak_date THEN logins.streak_count
+					WHEN logins.last_streak_date = EXCLUDED.last_streak_date - 1 THEN logins.streak_count + 1
 					ELSE 1
 				END,
-				last_streak_date = CURRENT_DATE`,
-			[me.login, me.wallet]
+				last_streak_date = EXCLUDED.last_streak_date;
+		`,
+			[me.login, me.wallet, timezone,]
 		);
 	}
 	catch (error) {
