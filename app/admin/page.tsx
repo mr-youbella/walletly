@@ -8,6 +8,7 @@ type LoginRow = {
 	id: number;
 	login: string;
 	target: number;
+	streak_count: number;
 	first_login_at: string;
 	last_login_at: string;
 };
@@ -32,9 +33,9 @@ async function getCurrentLogin(): Promise<string | null> {
 
 async function getAllLogins(): Promise<LoginRow[]> {
 	const result = await pool.query(
-		`SELECT id, login, target, first_login_at, last_login_at
+		`SELECT id, login, target, streak_count, first_login_at, last_login_at
 		 FROM logins
-		 ORDER BY last_login_at DESC`
+		 ORDER BY streak_count DESC, last_login_at DESC`
 	);
 
 	return result.rows;
@@ -98,6 +99,7 @@ export default async function AdminPage() {
 								<tr className="border-b border-white/6 text-xs uppercase tracking-wider text-white/40">
 									<th className="px-5 py-3 font-medium">Login</th>
 									<th className="px-5 py-3 font-medium">Target</th>
+									<th className="px-5 py-3 font-medium">Streak</th>
 									<th className="px-5 py-3 font-medium">First login</th>
 									<th className="px-5 py-3 font-medium">Last login</th>
 								</tr>
@@ -117,6 +119,12 @@ export default async function AdminPage() {
 												{row.target.toLocaleString()} ₳
 											</span>
 										</td>
+										<td className="whitespace-nowrap px-5 py-3">
+											<span className="flex items-center gap-1.5 font-semibold text-orange-400">
+												<Flame size={14} className="shrink-0" />
+												{row.streak_count}
+											</span>
+										</td>
 										<td className="whitespace-nowrap px-5 py-3 text-white/50">{formatDate(row.first_login_at)}</td>
 										<td className="whitespace-nowrap px-5 py-3 text-white/50">{formatDate(row.last_login_at)}</td>
 									</tr>
@@ -124,7 +132,7 @@ export default async function AdminPage() {
 
 								{logins.length === 0 && (
 									<tr>
-										<td colSpan={4} className="px-5 py-8 text-center text-white/30">
+										<td colSpan={5} className="px-5 py-8 text-center text-white/30">
 											No logins recorded yet.
 										</td>
 									</tr>

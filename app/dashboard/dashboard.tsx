@@ -15,7 +15,7 @@ function computeGoal(current: number, target: number) {
 	return { remaining, neededEvaluations, progress }
 }
 
-export default function WalletDashboardClient({ initialStudent, initialTarget }: { initialStudent: Student; initialTarget: number }) {
+export default function WalletDashboardClient({ initialStudent, initialTarget, streak }: { initialStudent: Student; initialTarget: number; streak: number }) {
 	const [student] = useState<Student>(initialStudent);
 	const [target, setTarget] = useState(initialTarget);
 	const [targetInput, setTargetInput] = useState(initialTarget > 0 ? initialTarget.toString() : "0");
@@ -52,7 +52,7 @@ export default function WalletDashboardClient({ initialStudent, initialTarget }:
 			<div className="pointer-events-none absolute -top-40 -right-40 h-96 w-96 rounded-full bg-red-500/10 blur-3xl" />
 			<div className="pointer-events-none absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-orange-500/5 blur-3xl" />
 
-			<Header login={student.login} />
+			<Header login={student.login} streak={streak} />
 
 			<main className="relative mx-auto max-w-6xl px-6 py-10">
 				<WelcomeBanner student={student} />

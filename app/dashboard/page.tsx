@@ -1,9 +1,10 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { pool } from "@/lib/db";
-import WalletDashboard from "./dashboard";
+import { pool } from "../../lib/db";
+import { Student } from "../../lib/types/types";
+import WalletDashboardClient from "./dashboard";
 
-async function getStudentAndTarget() {
+async function getStudentAndTarget(): Promise<{ student: Student; target: number; streak: number } | null> {
 	const cookieStore = await cookies();
 	const accessToken = cookieStore.get("access_token")?.value;
 
@@ -19,23 +20,32 @@ async function getStudentAndTarget() {
 
 	const me = await meResponse.json();
 
-	const student = {
+	const student: Student = {
 		login: me.login,
 		fullName: me.usual_full_name ?? me.displayname,
-		avatarUrl: me.image.link ?? "",
+		avatarUrl: me.image?.link ?? "",
 		campus: me.campus?.[0]?.name ?? "42",
 		wallet: me.wallet,
 		evaluationPoints: me.correction_point,
 	};
 
-	const targetResult = await pool.query(
-		`SELECT target FROM logins WHERE login = $1`,
-		[me.login]
-	);
+	let target = 0;
+	let streak = 0;
 
-	const target = targetResult.rows[0]?.target ?? 0;
+	try {
+		const result = await pool.query(
+			`SELECT target, streak_count FROM logins WHERE login = $1`,
+			[me.login]
+		);
 
-	return { student, target };
+		target = result.rows[0]?.target ?? 0;
+		streak = result.rows[0]?.streak_count ?? 0;
+	}
+	catch (error) {
+		console.error("Failed to fetch target/streak:", error);
+	}
+
+	return { student, target, streak };
 }
 
 export default async function DashboardPage() {
@@ -44,5 +54,5 @@ export default async function DashboardPage() {
 	if (!data)
 		redirect("/auth");
 
-	return <WalletDashboard initialStudent={data.student} initialTarget={data.target} />;
+	return <WalletDashboardClient initialStudent={data.student} initialTarget={data.target} streak={data.streak} />;
 }

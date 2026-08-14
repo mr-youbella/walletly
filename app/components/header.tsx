@@ -1,11 +1,12 @@
 "use client"
 import { useState } from "react"
-import { LogOut, ShieldIcon, Menu, X, LayoutDashboard, Trophy } from "lucide-react"
+import { LogOut, ShieldIcon, Menu, X, LayoutDashboard, Trophy, Flame } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link";
 
-export function Header(props: { login: string }) {
+export function Header(props: { login: string; streak?: number }) {
 	const login = props.login;
+	const streak = props.streak ?? 0;
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 	function logOut() {
@@ -29,6 +30,12 @@ export function Header(props: { login: string }) {
 						/>
 					</div>
 					<span className="text-[17px] font-bold bg-linear-to-r from-[#DC2626] to-[#F97316] bg-clip-text text-transparent">Walletly</span>
+					{streak > 0 && (
+						<span className="flex items-center gap-1 rounded-full border border-orange-500/20 bg-orange-500/10 px-2.5 py-1 text-xs font-bold text-orange-400">
+							<Flame size={12} />
+							{streak}
+						</span>
+					)}
 				</Link>
 
 				<div className="hidden items-center gap-4 sm:flex">
@@ -75,6 +82,12 @@ export function Header(props: { login: string }) {
 									className="h-7 w-7 object-contain"
 								/>
 								<span className="text-sm font-bold text-white/80">Menu</span>
+								{streak > 0 && (
+									<span className="flex items-center gap-1 rounded-full border border-orange-500/20 bg-orange-500/10 px-2 py-0.5 text-[11px] font-bold text-orange-400">
+										<Flame size={11} />
+										{streak}
+									</span>
+								)}
 							</div>
 							<button
 								onClick={() => setIsMenuOpen(false)}

@@ -44,10 +44,18 @@ export async function GET(request: NextRequest) {
 
 	try {
 		await pool.query(
-			`INSERT INTO logins (login, wallet)
-		 	VALUES ($1, $2)
-		 	ON CONFLICT (login)
-		 	DO UPDATE SET last_login_at = NOW(), wallet = $2`,
+			`INSERT INTO logins (login, wallet, streak_count, last_streak_date)
+			 VALUES ($1, $2, 1, CURRENT_DATE)
+			 ON CONFLICT (login)
+			 DO UPDATE SET
+				last_login_at = NOW(),
+				wallet = $2,
+				streak_count = CASE
+					WHEN logins.last_streak_date = CURRENT_DATE THEN logins.streak_count
+					WHEN logins.last_streak_date = CURRENT_DATE - 1 THEN logins.streak_count + 1
+					ELSE 1
+				END,
+				last_streak_date = CURRENT_DATE`,
 			[me.login, me.wallet]
 		);
 	}
@@ -57,15 +65,16 @@ export async function GET(request: NextRequest) {
 
 	const response = NextResponse.redirect(new URL("/dashboard", request.url));
 
-	response.cookies.set("access_token", accessToken, {
-		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
-		sameSite: "lax",
-		maxAge: tokenData.expires_in,
-		path: "/",
-	});
+	response.cookies.set("access_token", accessToken,
+		{
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			sameSite: "lax",
+			maxAge: tokenData.expires_in,
+			path: "/",
+		});
 
 	response.cookies.delete("oauth_state");
 
-	return (response);
+	return response;
 }
