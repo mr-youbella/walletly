@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { pool } from "@/lib/db";
 import { ShieldCheck, Flame, Target } from "lucide-react";
+import { Header } from "../components/header";
 
 type LoginRow = {
 	id: number;
@@ -56,7 +57,10 @@ export default async function AdminPage() {
 	const logins = await getAllLogins();
 
 	return (
-		<div className="relative min-h-screen w-full overflow-hidden bg-linear-to-br from-[#0a0b10] via-[#0f0f1a] to-[#1a0f0f] px-4 py-8 text-white sm:px-6 sm:py-10">
+		<div className="relative min-h-screen w-full overflow-hidden bg-linear-to-br from-[#0a0b10] via-[#0f0f1a] to-[#1a0f0f] text-white">
+
+			<Header login={currentLogin} />
+
 			<div
 				className="pointer-events-none absolute inset-0 opacity-[0.08]"
 				style={{
@@ -68,7 +72,7 @@ export default async function AdminPage() {
 			<div className="pointer-events-none absolute -top-40 -right-40 h-96 w-96 rounded-full bg-red-500/20 blur-3xl" />
 			<div className="pointer-events-none absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-orange-500/10 blur-3xl" />
 
-			<main className="relative mx-auto max-w-4xl">
+			<main className="relative mx-auto max-w-4xl sm:px-6 sm:py-10 py-8 px-4">
 				<div className="flex items-center gap-3 rounded-2xl border border-white/5 bg-linear-to-r from-red-500/5 to-orange-500/5 p-4">
 					<div
 						className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl shadow-lg shadow-red-500/20"
@@ -102,7 +106,7 @@ export default async function AdminPage() {
 								{logins.map((row) => (
 									<tr key={row.id} className="border-b border-white/4 transition-colors last:border-0 hover:bg-red-500/5">
 										<td className="whitespace-nowrap px-5 py-3 font-medium">
-											<a href={`https://profile.intra.42.fr/users/${row.login}`} className="flex items-center gap-2 text-white/90">
+											<a href={`https://profile.intra.42.fr/users/${row.login}`} target="_blank" className="flex items-center gap-2 text-white/90">
 												<Flame size={14} className="shrink-0 text-[#DC2626]" />
 												@{row.login}
 											</a>

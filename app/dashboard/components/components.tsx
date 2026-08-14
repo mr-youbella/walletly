@@ -4,43 +4,6 @@ import Image from "next/image"
 import { Student } from "../../../lib/types/types"
 import Link from "next/link";
 
-export function Header(props: { login: string }) {
-	const login = props.login;
-
-	function logOut() {
-		localStorage.clear();
-		window.location.href = "/api/auth/logout";
-	}
-
-	return (
-		<header className="relative flex items-center justify-between border-b border-white/5 px-8 py-5 backdrop-blur-sm bg-black/20">
-			<div className="flex items-center gap-3">
-				<div className="flex h-9 w-9 items-center justify-center rounded-xl shadow-lg shadow-indigo-500/20">
-					<Image
-						src="/walletlyLogo.svg"
-						alt="Walletly"
-						width={36}
-						height={36}
-						className="h-full w-full object-contain ml-1"
-					/>
-				</div>
-				<span className="text-[17px] font-bold bg-linear-to-r from-[#DC2626] to-[#F97316] bg-clip-text text-transparent">Walletly</span>
-			</div>
-
-			<div className="flex items-center gap-4">
-				<Link href="/admin" className={`flex items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-white/70 transition-all hover:border-yellow-400/30 hover:bg-yellow-500/10 hover:text-yellow-400 cursor-pointer ${login.toLowerCase() !== "youbella" ? "hidden" : ""}`}>
-					<ShieldIcon size={14} />
-					Admin
-				</Link>
-				<button onClick={logOut} className="flex items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-white/70 transition-all hover:border-red-400/30 hover:bg-red-500/10 hover:text-red-400 cursor-pointer">
-					<LogOut size={14} />
-					Logout
-				</button>
-			</div>
-		</header>
-	)
-}
-
 export function WelcomeBanner(props: { student: Student }) {
 
 	const student = props.student;

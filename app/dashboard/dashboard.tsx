@@ -2,7 +2,8 @@
 import { useMemo, useState } from "react"
 import { Wallet, Star, TrendingUp, Zap, Calculator, ChevronRight } from "lucide-react"
 import { Student } from "../../lib/types/types"
-import { ConversionNote, GoalInputCard, Header, ProgressRing, ResultCard, StatCard, WalletProgressBar, WelcomeBanner } from "./components/components"
+import { ConversionNote, GoalInputCard, ProgressRing, ResultCard, StatCard, WalletProgressBar, WelcomeBanner } from "./components/components"
+import { Header } from "../components/header"
 
 const CONVERSION_RATE = 5
 
