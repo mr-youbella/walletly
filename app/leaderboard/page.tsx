@@ -1,13 +1,14 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { pool } from "../../lib/db";
-import { Trophy, Medal, Wallet } from "lucide-react";
+import { Trophy, Medal, Wallet, Flame } from "lucide-react";
 import { Header } from "../components/header";
+import Link from "next/link";
 
 type LeaderboardRow = {
 	login: string;
 	wallet: number;
-	streak_count: number;
+	effective_streak: number;
 };
 
 async function getCurrentLogin(): Promise<string | null> {
@@ -44,11 +45,15 @@ async function getCurrentStreak(login: string) {
 	return (streak);
 }
 
-async function getLeaderboard(): Promise<LeaderboardRow[]> {
+async function getLeaderboard(sortBy: "wallet" | "streak_count"): Promise<LeaderboardRow[]> {
 	const result = await pool.query(
-		`SELECT login, wallet, streak_count
+		`SELECT login, wallet,
+		 CASE
+			WHEN last_streak_date >= CURRENT_DATE - 1 THEN streak_count
+			ELSE 0
+		 END AS effective_streak
 		 FROM logins
-		 ORDER BY wallet DESC
+		 ORDER BY ${sortBy} DESC
 		 LIMIT 50`
 	);
 
@@ -65,14 +70,17 @@ function rankStyle(rank: number) {
 	return { color: "rgba(255,255,255,0.4)", bg: "rgba(255,255,255,0.03)" };
 }
 
-export default async function LeaderboardPage() {
+export default async function LeaderboardPage({ searchParams }: { searchParams: Promise<{ sort?: string }> }) {
 	const currentLogin = await getCurrentLogin();
 	if (!currentLogin)
 		redirect("/auth");
 
 	const currentStreak = await getCurrentStreak(currentLogin);
 
-	const leaderboard = await getLeaderboard();
+	const { sort } = await searchParams;
+	const sortBy = sort === "streak" ? "streak_count" : "wallet";
+
+	const leaderboard = await getLeaderboard(sortBy);
 
 	return (
 		<div className="relative min-h-screen w-full overflow-hidden bg-linear-to-br from-[#0a0b10] via-[#0f0f1a] to-[#1a0f0f] text-white">
@@ -94,8 +102,33 @@ export default async function LeaderboardPage() {
 						<h1 className="bg-linear-to-r from-[#DC2626] to-[#F97316] bg-clip-text text-xl font-bold text-transparent sm:text-2xl">
 							Leaderboard
 						</h1>
-						<p className="text-xs text-white/40 sm:text-sm">Top Wallet holders on Walletly</p>
+						<p className="text-xs text-white/40 sm:text-sm">
+							{sortBy === "wallet" ? "Top Wallet holders on Walletly" : "Longest streaks on Walletly"}
+						</p>
 					</div>
+				</div>
+
+				<div className="mt-5 flex gap-2">
+					<Link
+						href="/leaderboard?sort=wallet"
+						className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl border px-4 py-2.5 text-sm font-semibold transition-all ${sortBy === "wallet"
+							? "border-red-500/30 bg-red-500/15 text-white"
+							: "border-white/10 text-white/50 hover:border-white/20 hover:text-white/80"
+							}`}
+					>
+						<Wallet size={14} />
+						Wallet
+					</Link>
+					<Link
+						href="/leaderboard?sort=streak"
+						className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl border px-4 py-2.5 text-sm font-semibold transition-all ${sortBy === "streak_count"
+							? "border-orange-500/30 bg-orange-500/15 text-white"
+							: "border-white/10 text-white/50 hover:border-white/20 hover:text-white/80"
+							}`}
+					>
+						<Flame size={14} />
+						Streak
+					</Link>
 				</div>
 
 				<div className="mt-6 overflow-hidden rounded-2xl border border-white/5 bg-white/2">
@@ -131,10 +164,17 @@ export default async function LeaderboardPage() {
 									)}
 								</a>
 
-								<span className="flex shrink-0 items-center gap-1.5 text-sm font-bold text-white/80">
-									<Wallet size={14} className="text-[#F87171]" />
-									{row.wallet.toLocaleString()} ₳
-								</span>
+								{sortBy === "wallet" ? (
+									<span className="flex shrink-0 items-center gap-1.5 text-sm font-bold text-white/80">
+										<Wallet size={14} className="text-[#F87171]" />
+										{row.wallet.toLocaleString()} ₳
+									</span>
+								) : (
+									<span className="flex shrink-0 items-center gap-1.5 text-sm font-bold text-orange-400">
+										<Flame size={14} />
+										{row.effective_streak} days
+									</span>
+								)}
 							</div>
 						);
 					})}
