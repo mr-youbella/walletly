@@ -22,6 +22,7 @@ export default function WalletDashboardClient({ initialStudent, initialTarget, s
 
 	async function changeTarget() {
 		const numericTarget = Number(targetInput.replace(/[^0-9]/g, "")) || 0;
+		const hasChanged = numericTarget !== target;
 
 		setTarget(numericTarget);
 		localStorage.setItem("walletly_target", numericTarget.toString());
@@ -32,6 +33,8 @@ export default function WalletDashboardClient({ initialStudent, initialTarget, s
 			window.scrollTo({ top: y, behavior: "smooth" });
 		}
 
+		if (!hasChanged)
+			return;
 		try {
 			await fetch("/api/target", {
 				method: "POST",

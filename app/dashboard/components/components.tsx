@@ -2,7 +2,6 @@ import { Target, LogOut, Sparkles, ShieldIcon } from "lucide-react"
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar"
 import Image from "next/image"
 import { Student } from "../../../lib/types/types"
-import Link from "next/link";
 
 export function WelcomeBanner(props: { student: Student }) {
 
@@ -168,4 +167,3 @@ export function ConversionNote({ neededEvaluations, remaining, target }: { neede
 		</div>
 	)
 }
-
