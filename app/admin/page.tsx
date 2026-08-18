@@ -8,7 +8,7 @@ type LoginRow = {
 	id: number;
 	login: string;
 	target: number;
-	streak_count: number;
+	effective_streak: number;
 	first_login_at: string;
 	last_login_at: string;
 };
@@ -33,7 +33,11 @@ async function getCurrentLogin(): Promise<string | null> {
 
 async function getAllLogins(): Promise<LoginRow[]> {
 	const result = await pool.query(
-		`SELECT id, login, target, streak_count, first_login_at, last_login_at
+		`SELECT id, login, target, first_login_at, last_login_at,
+		 CASE
+			WHEN last_streak_date >= CURRENT_DATE - 1 THEN streak_count
+			ELSE 0
+		 END AS effective_streak
 		 FROM logins
 		 ORDER BY streak_count DESC, last_login_at DESC`
 	);
@@ -122,7 +126,7 @@ export default async function AdminPage() {
 										<td className="whitespace-nowrap px-5 py-3">
 											<span className="flex items-center gap-1.5 font-semibold text-orange-400">
 												<Flame size={14} className="shrink-0" />
-												{row.streak_count}
+												{row.effective_streak}
 											</span>
 										</td>
 										<td className="whitespace-nowrap px-5 py-3 text-white/50">{formatDate(row.first_login_at)}</td>
