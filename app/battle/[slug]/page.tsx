@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect, notFound } from "next/navigation";
 import { pool } from "../../../lib/db";
+import { getStudentWallet } from "../../../lib/ft_app_token";
 import { Header } from "../../components/header";
 import { Swords, Crown } from "lucide-react";
 import AcceptButton from "./AcceptButton";
@@ -15,7 +16,7 @@ type Battle = {
 	winner_login: string | null;
 };
 
-async function getCurrentLogin(): Promise<string | null> {
+async function getCurrentStudent(): Promise<{ login: string; wallet: number } | null> {
 	const cookieStore = await cookies();
 	const accessToken = cookieStore.get("access_token")?.value;
 
@@ -30,7 +31,7 @@ async function getCurrentLogin(): Promise<string | null> {
 		return null;
 
 	const data = await response.json();
-	return data.login ?? null;
+	return { login: data.login, wallet: data.wallet };
 }
 
 async function getBattle(slug: string): Promise<Battle | null> {
@@ -56,12 +57,58 @@ function computeProgress(currentWallet: number, target: number) {
 	return Math.min(Math.max((currentWallet / target) * 100, 0), 100);
 }
 
+async function syncAndCheckWinner(battle: Battle) {
+	try {
+		const [challengerLiveWallet, opponentLiveWallet] = await Promise.all([
+			getStudentWallet(battle.challenger_login),
+			battle.opponent_login ? getStudentWallet(battle.opponent_login) : Promise.resolve(null),
+		]);
+
+		if (challengerLiveWallet !== null)
+			await pool.query(`UPDATE logins SET wallet = $1 WHERE login = $2`, [challengerLiveWallet, battle.challenger_login]);
+
+		if (battle.opponent_login && opponentLiveWallet !== null)
+			await pool.query(`UPDATE logins SET wallet = $1 WHERE login = $2`, [opponentLiveWallet, battle.opponent_login]);
+
+		if (battle.status !== "active")
+			return;
+
+		if (challengerLiveWallet !== null && challengerLiveWallet >= battle.target) {
+			await pool.query(
+				`UPDATE battles SET status = 'finished', winner_login = $1, finished_at = NOW() WHERE slug = $2 AND status = 'active'`,
+				[battle.challenger_login, battle.slug]
+			);
+			return;
+		}
+
+		if (opponentLiveWallet !== null && opponentLiveWallet >= battle.target) {
+			await pool.query(
+				`UPDATE battles SET status = 'finished', winner_login = $1, finished_at = NOW() WHERE slug = $2 AND status = 'active'`,
+				[battle.opponent_login, battle.slug]
+			);
+		}
+	}
+	catch (error) {
+		console.error("Failed to sync live wallets / check battle winner:", error);
+	}
+}
+
 export default async function BattlePage({ params }: { params: Promise<{ slug: string }> }) {
-	const currentLogin = await getCurrentLogin();
-	if (!currentLogin)
+	const student = await getCurrentStudent();
+	if (!student)
 		redirect("/auth");
 
 	const { slug } = await params;
+	const initialBattle = await getBattle(slug);
+
+	if (!initialBattle) {
+		notFound();
+		return;
+	}
+
+	if (initialBattle.status === "active")
+		await syncAndCheckWinner(initialBattle);
+
 	const battle = await getBattle(slug);
 
 	if (!battle) {
@@ -69,6 +116,7 @@ export default async function BattlePage({ params }: { params: Promise<{ slug: s
 		return;
 	}
 
+	const currentLogin = student.login;
 	const isChallenger = currentLogin === battle.challenger_login;
 	const isOpponent = currentLogin === battle.opponent_login;
 	const canAccept = battle.status === "pending" && !isChallenger && !battle.opponent_login;
