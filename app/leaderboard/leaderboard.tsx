@@ -1,6 +1,7 @@
 "use client"
 import { useMemo, useState } from "react"
 import { Trophy, Medal, Wallet, Flame } from "lucide-react"
+import ChallengeButton from "../components/ChallengeButton";
 
 type LeaderboardRow = {
 	login: string;
@@ -18,7 +19,7 @@ function rankStyle(rank: number) {
 	return { color: "rgba(255,255,255,0.4)", bg: "rgba(255,255,255,0.03)" };
 }
 
-export default function LeaderboardClient({ leaderboard, currentLogin }: { leaderboard: LeaderboardRow[]; currentLogin: string }) {
+export default function LeaderboardClient({ leaderboard, currentLogin, target, currentWallet }: { leaderboard: LeaderboardRow[]; currentLogin: string; target: number, currentWallet: number }) {
 	const [sortBy, setSortBy] = useState<"wallet" | "effective_streak">("wallet");
 
 	const sorted = useMemo(() => {
@@ -27,20 +28,26 @@ export default function LeaderboardClient({ leaderboard, currentLogin }: { leade
 
 	return (
 		<main className="relative mx-auto max-w-2xl py-8 sm:px-6 sm:py-10 px-4">
-			<div className="flex items-center gap-3 rounded-2xl border border-white/5 bg-linear-to-r from-red-500/5 to-orange-500/5 p-4 sm:p-5">
-				<div
-					className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl shadow-lg shadow-red-500/20"
-					style={{ background: "linear-gradient(135deg, #DC2626, #991B1B)" }}
-				>
-					<Trophy size={18} className="text-white" />
+			<div className="flex flex-col items-start gap-3 rounded-2xl border border-white/5 bg-linear-to-r from-red-500/5 to-orange-500/5 p-4 sm:p-5">
+				<div className="flex items-center gap-3 min-w-0 flex-1 w-full">
+					<div
+						className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl shadow-lg shadow-red-500/20"
+						style={{ background: "linear-gradient(135deg, #DC2626, #991B1B)" }}
+					>
+						<Trophy size={18} className="text-white" />
+					</div>
+					<div className="min-w-0">
+						<h1 className="bg-linear-to-r from-[#DC2626] to-[#F97316] bg-clip-text text-xl font-bold text-transparent sm:text-2xl">
+							Leaderboard
+						</h1>
+						<p className="text-xs text-white/40 sm:text-sm">
+							{sortBy === "wallet" ? "Top Wallet holders on Walletly" : "Longest streaks on Walletly"}
+						</p>
+					</div>
 				</div>
-				<div className="min-w-0">
-					<h1 className="bg-linear-to-r from-[#DC2626] to-[#F97316] bg-clip-text text-xl font-bold text-transparent sm:text-2xl">
-						Leaderboard
-					</h1>
-					<p className="text-xs text-white/40 sm:text-sm">
-						{sortBy === "wallet" ? "Top Wallet holders on Walletly" : "Longest streaks on Walletly"}
-					</p>
+
+				<div className="w-full">
+					<ChallengeButton target={target} currentWallet={currentWallet} />
 				</div>
 			</div>
 

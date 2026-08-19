@@ -4,6 +4,7 @@ import { Wallet, Star, TrendingUp, Zap, Calculator, ChevronRight } from "lucide-
 import { Student } from "../../lib/types/types"
 import { ConversionNote, GoalInputCard, ProgressRing, ResultCard, StatCard, WalletProgressBar, WelcomeBanner } from "./components/components"
 import { Header } from "../components/header"
+import ChallengeButton from "../components/ChallengeButton"
 
 const CONVERSION_RATE = 5
 
@@ -80,9 +81,9 @@ export default function WalletDashboardClient({ initialStudent, initialTarget, s
 					<GoalInputCard value={targetInput} onChange={setTargetInput} />
 				</div>
 
-				<div className="mt-8 flex justify-center">
+				<div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
 					<button
-						className="group relative flex items-center gap-2 overflow-hidden rounded-2xl px-9 py-4 text-[15px] font-bold text-white transition-all hover:scale-105 active:scale-[0.98] cursor-pointer"
+						className="group relative flex w-full sm:w-auto items-center justify-center gap-2 overflow-hidden rounded-2xl px-6 sm:px-9 py-4 text-[15px] font-bold text-white transition-all hover:scale-105 active:scale-[0.98] cursor-pointer"
 						style={{ background: "linear-gradient(135deg, #DC2626, #991B1B, #7F1D1D)" }}
 						onClick={changeTarget}
 					>
@@ -91,6 +92,9 @@ export default function WalletDashboardClient({ initialStudent, initialTarget, s
 						Calculate goal
 						<ChevronRight size={18} />
 					</button>
+					<div className="w-full sm:w-auto">
+						<ChallengeButton target={target} currentWallet={student.wallet}/>
+					</div>
 				</div>
 
 				<div id="result" className="mt-10 flex items-center gap-2.5">

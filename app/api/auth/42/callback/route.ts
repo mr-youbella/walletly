@@ -64,6 +64,15 @@ export async function GET(request: NextRequest) {
 		`,
 			[me.login, me.wallet, timezone,]
 		);
+
+		await pool.query(
+			`UPDATE battles
+			 SET status = 'finished', winner_login = $1, finished_at = NOW()
+			 WHERE (challenger_login = $1 OR opponent_login = $1)
+			   AND status = 'active'
+			   AND $2 >= target`,
+			[me.login, me.wallet]
+		);
 	}
 	catch (error) {
 		console.error("Failed to record login:", error);
