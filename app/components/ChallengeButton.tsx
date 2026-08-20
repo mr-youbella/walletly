@@ -17,7 +17,7 @@ export default function ChallengeButton({ target, currentWallet }: { target: num
 			const response = await fetch("/api/battles", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ target }),
+				body: JSON.stringify({ target, currentWallet }),
 			});
 
 			if (!response.ok) {
