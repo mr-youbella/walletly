@@ -54,6 +54,10 @@ export const metadata: Metadata =
 		index: true,
 		follow: true,
 	},
+
+	verification: {
+		google: "google-site-verification=8VJj_lYQ8yYu5w17PlC0kjwr471JajcMJqhqzxZL15w",
+	},
 }
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
