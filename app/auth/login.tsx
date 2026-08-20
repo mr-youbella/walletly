@@ -5,7 +5,10 @@ import { useEffect, useState } from "react"
 
 export default function LoginPage() {
 	function handleLogin() {
-		window.location.href = "/api/auth/42";
+		const params = new URLSearchParams(window.location.search);
+		const callbackUrl = params.get("callbackUrl") || "/dashboard";
+
+		window.location.href = `/api/auth/42?callbackUrl=${encodeURIComponent(callbackUrl)}`;
 	}
 
 	const [particles, setParticles] = useState<

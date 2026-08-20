@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pool } from "@/lib/db";
 
+function getSafeCallbackUrl(value: string | undefined) {
+	if (!value || !value.startsWith("/") || value.startsWith("//"))
+		return "/dashboard";
+	return value;
+}
+
 export async function GET(request: NextRequest) {
 	const code = request.nextUrl.searchParams.get("code");
 	const state = request.nextUrl.searchParams.get("state");
@@ -64,21 +70,14 @@ export async function GET(request: NextRequest) {
 		`,
 			[me.login, me.wallet, timezone,]
 		);
-
-		await pool.query(
-			`UPDATE battles
-			 SET status = 'finished', winner_login = $1, finished_at = NOW()
-			 WHERE (challenger_login = $1 OR opponent_login = $1)
-			   AND status = 'active'
-			   AND $2 >= target`,
-			[me.login, me.wallet]
-		);
 	}
 	catch (error) {
 		console.error("Failed to record login:", error);
 	}
 
-	const response = NextResponse.redirect(new URL("/dashboard", request.url));
+	const rawCallbackUrl = request.cookies.get("auth_callback_url")?.value;
+	const callbackUrl = getSafeCallbackUrl(rawCallbackUrl);
+	const response = NextResponse.redirect(new URL(callbackUrl, request.url));
 
 	response.cookies.set("access_token", accessToken,
 		{
@@ -90,6 +89,7 @@ export async function GET(request: NextRequest) {
 		});
 
 	response.cookies.delete("oauth_state");
+	response.cookies.delete("auth_callback_url");
 
 	return response;
 }

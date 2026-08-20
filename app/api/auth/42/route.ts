@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { randomBytes } from "crypto";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
 	const state = randomBytes(16).toString("hex");
 
 	const params = new URLSearchParams({
@@ -12,8 +12,16 @@ export async function GET() {
 	});
 
 	const response = NextResponse.redirect(`https://api.intra.42.fr/oauth/authorize?${params.toString()}`);
+	const callbackUrl = request.nextUrl.searchParams.get("callbackUrl") || "/dashboard";
 
 	response.cookies.set("oauth_state", state, {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === "production",
+		sameSite: "lax",
+		maxAge: 600,
+		path: "/",
+	});
+	response.cookies.set("auth_callback_url", callbackUrl, {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
 		sameSite: "lax",

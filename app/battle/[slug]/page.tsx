@@ -95,10 +95,10 @@ async function syncAndCheckWinner(battle: Battle) {
 
 export default async function BattlePage({ params }: { params: Promise<{ slug: string }> }) {
 	const student = await getCurrentStudent();
-	if (!student)
-		redirect("/auth");
-
 	const { slug } = await params;
+	if (!student)
+		redirect(`/auth?callbackUrl=${encodeURIComponent(`/battle/${slug}`)}`);
+
 	const initialBattle = await getBattle(slug);
 
 	if (!initialBattle) {

@@ -28,7 +28,7 @@ async function getCurrentLogin(): Promise<string | null> {
 	return data.login ?? null;
 }
 
-async function getCurrentStreakTargetWallet(login: string): Promise<{streak: number, target: number, wallet: number}>{
+async function getCurrentStreakTargetWallet(login: string): Promise<{ streak: number, target: number, wallet: number }> {
 	let streak = 0;
 	let target = 0;
 	let wallet = 0;
@@ -45,7 +45,7 @@ async function getCurrentStreakTargetWallet(login: string): Promise<{streak: num
 	catch (error) {
 		console.error("Failed to fetch streak:", error);
 	}
-	return ({streak, target, wallet});
+	return ({ streak, target, wallet });
 }
 
 async function getLeaderboard(): Promise<LeaderboardRow[]> {
@@ -65,7 +65,7 @@ async function getLeaderboard(): Promise<LeaderboardRow[]> {
 export default async function Leaderboar() {
 	const currentLogin = await getCurrentLogin();
 	if (!currentLogin)
-		redirect("/auth");
+		redirect(`/auth?callbackUrl=${encodeURIComponent(`/leaderboard`)}`);
 
 	const currentStreakTargetWallet = await getCurrentStreakTargetWallet(currentLogin);
 	const streak = currentStreakTargetWallet.streak;
@@ -76,12 +76,19 @@ export default async function Leaderboar() {
 	return (
 		<div className="relative min-h-screen w-full overflow-hidden bg-linear-to-br from-[#0a0b10] via-[#0f0f1a] to-[#1a0f0f] text-white">
 
+			<div
+				className="pointer-events-none absolute inset-0 opacity-[0.08]"
+				style={{
+					backgroundImage: "radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px)",
+					backgroundSize: "40px 40px",
+				}}
+			/>
 			<Header login={currentLogin} streak={streak} />
 
 			<div className="pointer-events-none absolute -top-40 -right-40 h-96 w-96 rounded-full bg-red-500/10 blur-3xl" />
 			<div className="pointer-events-none absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-orange-500/5 blur-3xl" />
 
-			<LeaderboardClient leaderboard={leaderboard} currentLogin={currentLogin} target={target} currentWallet={currentWallet}/>
+			<LeaderboardClient leaderboard={leaderboard} currentLogin={currentLogin} target={target} currentWallet={currentWallet} />
 		</div>
 	);
 }
