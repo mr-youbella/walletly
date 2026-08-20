@@ -63,7 +63,6 @@ export default function ChallengeButton({ target, currentWallet }: { target: num
 	return (
 		<button
 			onClick={handleChallenge}
-			disabled={isLoading || target <= 0 || target <= currentWallet}
 			className="flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 px-4 sm:px-6 py-3 sm:py-4 h-13 sm:h-14 text-sm sm:text-[15px] font-semibold text-white/70 transition-all hover:border-red-400/30 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
 		>
 			<Swords size={16} className="sm:size-4.5]" />
