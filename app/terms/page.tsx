@@ -80,7 +80,20 @@ export default function TermsPage() {
 					</section>
 
 					<section>
-						<h2 className="mb-2 text-base font-semibold text-white">5. No Warranty</h2>
+						<h2 className="mb-2 text-base font-semibold text-white">5. Wallet Battle</h2>
+						<p>
+							Walletly lets you challenge another student to a friendly race toward a
+							shared Wallet goal. When you or your opponent open a battle page, Walletly
+							checks both participants&apos; current Wallet balance directly from the 42
+							API (using application-level access, not your personal login) to update
+							progress and determine a winner. By starting or accepting a battle, you
+							agree that your 42 login and Wallet progress will be visible to the other
+							participant in that battle.
+						</p>
+					</section>
+
+					<section>
+						<h2 className="mb-2 text-base font-semibold text-white">6. No Warranty</h2>
 						<p>
 							Walletly is provided &quot;as is,&quot; with no guarantee of accuracy. Wallet
 							and evaluation figures are pulled directly from the 42 API and may not always
@@ -90,7 +103,7 @@ export default function TermsPage() {
 					</section>
 
 					<section>
-						<h2 className="mb-2 text-base font-semibold text-white">6. Changes</h2>
+						<h2 className="mb-2 text-base font-semibold text-white">7. Changes</h2>
 						<p>
 							These terms may be updated as the project evolves. Continued use of Walletly
 							after changes means you accept the updated terms.
@@ -98,7 +111,7 @@ export default function TermsPage() {
 					</section>
 
 					<section>
-						<h2 className="mb-2 text-base font-semibold text-white">7. Contact</h2>
+						<h2 className="mb-2 text-base font-semibold text-white">8. Contact</h2>
 						<p>
 							Do you have any questions or concerns about Walletly? Contact the developer via <a href="https://discordapp.com/users/518135329509605380" target="_blank" className="text-[#5865f2] cursor-pointer">Discord</a>.
 						</p>

@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { pool } from "@/lib/db";
-import { Swords, Target, Clock, CheckCircle, Trophy } from "lucide-react";
+import { Swords, Target, Clock, CheckCircle, Trophy, Calendar, User } from "lucide-react";
 import { Header } from "../components/header";
+import BattleActions from "./BattleActions";
+import ChallengeButton from "../components/ChallengeButton";
 
 type BattleRow = {
 	id: number;
@@ -46,6 +48,23 @@ async function getUserBattles(login: string): Promise<BattleRow[]> {
 	);
 
 	return result.rows;
+}
+
+async function deleteBattle(battleId: number, userLogin: string) {
+	"use server"
+
+	const result = await pool.query(
+		"SELECT challenger_login FROM battles WHERE id = $1",
+		[battleId]
+	);
+
+	if (result.rows.length === 0)
+		throw new Error("Battle not found");
+
+	if (result.rows[0].challenger_login !== userLogin)
+		throw new Error("You can only delete your own battles");
+
+	await pool.query("DELETE FROM battles WHERE id = $1", [battleId]);
 }
 
 function formatDate(value: string) {
@@ -92,7 +111,7 @@ export default async function MyBattlesPage() {
 			<div className="pointer-events-none absolute -top-40 -right-40 h-96 w-96 rounded-full bg-red-500/20 blur-3xl" />
 			<div className="pointer-events-none absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-orange-500/10 blur-3xl" />
 
-			<main className="relative mx-auto max-w-5xl sm:px-6 sm:py-10 py-8 px-4">
+			<main className="relative mx-auto max-w-4xl sm:px-6 sm:py-10 py-8 px-4">
 				<div className="flex items-center gap-3 rounded-2xl border border-white/5 bg-linear-to-r from-red-500/5 to-orange-500/5 p-4 sm:p-5">
 					<div
 						className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-lg shadow-red-500/20"
@@ -110,127 +129,85 @@ export default async function MyBattlesPage() {
 					</div>
 				</div>
 
-				<div className="mt-6 overflow-hidden rounded-2xl border border-white/6 bg-linear-to-br from-white/2 to-red-500/2 backdrop-blur-sm">
-					<div className="overflow-x-auto">
-						{battles.length === 0 ? (
-							<div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-								<Swords size={48} className="text-white/10 mb-4" />
-								<p className="text-white/40 text-sm">No battles yet</p>
-								<p className="text-white/20 text-xs mt-1">Challenge a friend to get started!</p>
-							</div>
-						) : (
-							<table className="w-full min-w-200 text-left text-sm">
-								<thead>
-									<tr className="border-b border-white/6 text-xs uppercase tracking-wider text-white/40">
-										<th className="px-5 py-3 font-medium">Battle</th>
-										<th className="px-5 py-3 font-medium">Target</th>
-										<th className="px-5 py-3 font-medium">Status</th>
-										<th className="px-5 py-3 font-medium">Winner</th>
-										<th className="px-5 py-3 font-medium">Created</th>
-										<th className="px-5 py-3 font-medium">Action</th>
-									</tr>
-								</thead>
-								<tbody>
-									{battles.map((row) => {
-										const statusInfo = getStatusBadge(row.status);
-										const StatusIcon = statusInfo.icon;
-										const isChallenger = row.challenger_login === user.login;
-										const opponent = isChallenger ? row.opponent_login : row.challenger_login;
-										const isWinner = row.winner_login === user.login;
-										const isPending = row.status === 'pending';
-										const isActive = row.status === 'accepted';
-										const isCompleted = row.status === 'completed';
+				<div className="my-6 space-y-3">
+					{battles.length === 0 ? (
+						<div className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-2xl border border-white/5 bg-white/2">
+							<Swords size={48} className="text-white/10 mb-4" />
+							<p className="text-white/40 text-sm">No battles yet</p>
+							<p className="text-white/20 text-xs mt-1">Challenge a friend to get started!</p>
+						</div>
+					) : (
+						battles.map((row) => {
+							const statusInfo = getStatusBadge(row.status);
+							const StatusIcon = statusInfo.icon;
+							const isChallenger = row.challenger_login === user.login;
+							const opponent = isChallenger ? row.opponent_login : row.challenger_login;
+							const isWinner = row.winner_login === user.login;
 
-										return (
-											<tr key={row.id} className="border-b border-white/4 transition-colors last:border-0 hover:bg-red-500/5">
-												<td className="whitespace-nowrap px-5 py-3">
-													<div className="flex items-center gap-2">
-														<span className="text-white/90 font-medium">
-															{isChallenger ? 'You' : <a href={`https://profile.intra.42.fr/users/${row.challenger_login}`} target="_blank" className="text-white/70 hover:text-white">@{row.challenger_login}</a>}
-														</span>
-														<span className="text-white/20">vs</span>
-														<span className="text-white/90 font-medium">
-															{!isChallenger ? 'You' : opponent ? (
-																<a href={`https://profile.intra.42.fr/users/${opponent}`} target="_blank" className="text-white/70 hover:text-white">@{opponent}</a>
-															) : (
-																<span className="text-white/30">Anyone</span>
-															)}
-														</span>
-													</div>
-												</td>
-												<td className="whitespace-nowrap px-5 py-3">
-													<span className="flex items-center gap-1.5 text-white/70">
-														<Target size={14} className="shrink-0 text-[#F97316]" />
-														{row.target.toLocaleString()} ₳
-													</span>
-												</td>
-												<td className="whitespace-nowrap px-5 py-3">
-													<span
-														className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
-														style={{ backgroundColor: statusInfo.bg, color: statusInfo.color }}
-													>
-														<StatusIcon size={12} />
-														{statusInfo.label}
-													</span>
-												</td>
-												<td className="whitespace-nowrap px-5 py-3">
-													{row.winner_login ? (
-														<div className="flex items-center gap-1.5">
-															<Trophy size={14} className={isWinner ? "text-[#FBBF24]" : "text-white/20"} />
-															<a href={`https://profile.intra.42.fr/users/${row.winner_login}`} target="_blank" className={`font-semibold ${isWinner ? 'text-[#FBBF24]' : 'text-white/50'}`}>
-																@{row.winner_login}
-																{isWinner && <span className="ml-1 text-[10px]">🎉</span>}
-															</a>
-														</div>
+							return (
+								<div key={row.id} className="rounded-2xl border border-white/5 bg-white/2 p-4 sm:p-5 transition hover:border-white/10 hover:bg-white/4">
+									<div className="flex flex-col sm:flex-row sm:items-center gap-4">
+										<div className="flex-1 min-w-0">
+											<div className="flex items-center gap-2 flex-wrap">
+												<span className="text-sm font-medium text-white/90">
+													{isChallenger ? 'You' : (
+														<a href={`https://profile.intra.42.fr/users/${row.challenger_login}`} target="_blank" className="hover:text-white">
+															@{row.challenger_login}
+														</a>
+													)}
+												</span>
+												<span className="text-white/20 text-xs">vs</span>
+												<span className="text-sm font-medium text-white/90">
+													{!isChallenger ? 'You' : opponent ? (
+														<a href={`https://profile.intra.42.fr/users/${opponent}`} target="_blank" className="hover:text-white">
+															@{opponent}
+														</a>
 													) : (
-														<span className="text-white/30">—</span>
+														<span className="text-white/30">Anyone</span>
 													)}
-												</td>
-												<td className="whitespace-nowrap px-5 py-3 text-white/50 text-xs">
+												</span>
+											</div>
+											<div className="flex items-center gap-4 mt-1.5 flex-wrap">
+												<span className="flex items-center gap-1 text-xs text-white/40">
+													<Target size={12} className="text-[#F97316]" />
+													{row.target.toLocaleString()} ₳
+												</span>
+												<span className="flex items-center gap-1 text-xs text-white/40">
+													<Calendar size={12} />
 													{formatDate(row.created_at)}
-												</td>
-												<td className="whitespace-nowrap px-5 py-3">
-													{isPending && (
-														<a
-															href={`/battle/${row.slug}`}
-															className="inline-flex items-center gap-1 rounded-lg bg-red-500/20 px-3 py-1.5 text-xs font-medium text-[#F87171] hover:bg-red-500/30 transition"
-														>
-															View
-														</a>
-													)}
-													{isActive && (
-														<a
-															href={`/battle/${row.slug}`}
-															className="inline-flex items-center gap-1 rounded-lg bg-blue-500/20 px-3 py-1.5 text-xs font-medium text-[#60A5FA] hover:bg-blue-500/30 transition"
-														>
-															Join
-														</a>
-													)}
-													{isCompleted && (
-														<a
-															href={`/battle/${row.slug}`}
-															className="inline-flex items-center gap-1 rounded-lg bg-white/10 px-3 py-1.5 text-xs font-medium text-white/50 hover:bg-white/20 transition"
-														>
-															View
-														</a>
-													)}
-													{!isPending && !isActive && !isCompleted && (
-														<a
-															href={`/battle/${row.slug}`}
-															className="inline-flex items-center gap-1 rounded-lg bg-white/10 px-3 py-1.5 text-xs font-medium text-white/50 hover:bg-white/20 transition"
-														>
-															View
-														</a>
-													)}
-												</td>
-											</tr>
-										);
-									})}
-								</tbody>
-							</table>
-						)}
-					</div>
+												</span>
+												{row.winner_login && (
+													<span className={`flex items-center gap-1 text-xs ${isWinner ? 'text-[#FBBF24]' : 'text-white/40'}`}>
+														<Trophy size={12} />
+														{isWinner ? 'You won! 🎉' : `@${row.winner_login} won`}
+													</span>
+												)}
+											</div>
+										</div>
+										<div className="flex items-center gap-3 shrink-0">
+											<span
+												className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap"
+												style={{ backgroundColor: statusInfo.bg, color: statusInfo.color }}
+											>
+												<StatusIcon size={12} />
+												{statusInfo.label}
+											</span>
+											<BattleActions
+												battleId={row.id}
+												slug={row.slug}
+												status={row.status}
+												isChallenger={isChallenger}
+												userLogin={user.login}
+												deleteAction={deleteBattle}
+											/>
+										</div>
+									</div>
+								</div>
+							);
+						})
+					)}
 				</div>
+				<ChallengeButton />
 			</main>
 		</div>
 	);

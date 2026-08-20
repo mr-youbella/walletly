@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react"
-import { LogOut, ShieldIcon, Menu, X, LayoutDashboard, Trophy, Flame } from "lucide-react"
+import { LogOut, ShieldIcon, Menu, X, LayoutDashboard, Trophy, Flame, Swords } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link";
 
@@ -44,6 +44,10 @@ export function Header(props: { login: string; streak?: number }) {
 					<Link href="/leaderboard" className="flex items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-white/70 transition-all hover:border-amber-400/30 hover:bg-amber-500/10 hover:text-amber-400 cursor-pointer">
 						<Trophy size={14} />
 						Leaderboard
+					</Link>
+					<Link href="/battle" className="flex items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-white/70 transition-all hover:border-red-400/30 hover:bg-red-500/10 hover:text-red-400 cursor-pointer">
+						<Swords size={14} />
+						My Battles
 					</Link>
 					{isAdmin && (
 						<Link href="/admin" className="flex items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-white/70 transition-all hover:border-yellow-400/30 hover:bg-yellow-500/10 hover:text-yellow-400 cursor-pointer">
@@ -117,6 +121,15 @@ export function Header(props: { login: string; streak?: number }) {
 							>
 								<Trophy size={16} />
 								Leaderboard
+							</Link>
+
+							<Link
+								href="/battle"
+								onClick={() => setIsMenuOpen(false)}
+								className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/70 transition hover:bg-red-500/10 hover:text-red-400"
+							>
+								<Swords size={16} />
+								My Battles
 							</Link>
 
 							{isAdmin && (

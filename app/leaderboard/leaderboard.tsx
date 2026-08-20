@@ -19,7 +19,7 @@ function rankStyle(rank: number) {
 	return { color: "rgba(255,255,255,0.4)", bg: "rgba(255,255,255,0.03)" };
 }
 
-export default function LeaderboardClient({ leaderboard, currentLogin, target, currentWallet }: { leaderboard: LeaderboardRow[]; currentLogin: string; target: number, currentWallet: number }) {
+export default function LeaderboardClient({ leaderboard, currentLogin }: { leaderboard: LeaderboardRow[]; currentLogin: string; }) {
 	const [sortBy, setSortBy] = useState<"wallet" | "effective_streak">("wallet");
 
 	const sorted = useMemo(() => {
@@ -47,7 +47,7 @@ export default function LeaderboardClient({ leaderboard, currentLogin, target, c
 				</div>
 
 				<div className="w-full">
-					<ChallengeButton target={target} currentWallet={currentWallet} />
+					<ChallengeButton />
 				</div>
 			</div>
 

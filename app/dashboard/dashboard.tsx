@@ -92,9 +92,6 @@ export default function WalletDashboardClient({ initialStudent, initialTarget, s
 						Calculate goal
 						<ChevronRight size={18} />
 					</button>
-					<div className="w-full sm:w-auto">
-						<ChallengeButton target={target} currentWallet={student.wallet}/>
-					</div>
 				</div>
 
 				<div id="result" className="mt-10 flex items-center gap-2.5">
