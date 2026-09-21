@@ -4,16 +4,17 @@ import { Wallet, Star, TrendingUp, Zap, Calculator, ChevronRight } from "lucide-
 import { Student } from "../../lib/types/types"
 import { ConversionNote, GoalInputCard, ProgressRing, ResultCard, StatCard, WalletProgressBar, WelcomeBanner } from "./components/components"
 import { Header } from "../components/header"
-import ChallengeButton from "../components/ChallengeButton"
 
 const CONVERSION_RATE = 5
 
-function computeGoal(current: number, target: number) {
-	const remaining = Math.max(target - current, 0)
-	const neededEvaluations = Math.ceil(remaining / CONVERSION_RATE)
-	const progress = target > 0 ? Math.min((current / target) * 100, 100) : 100
+function computeGoal(current: number, target: number, evaluationPoints: number) {
+	const	remaining = Math.max(target - current, 0);
+	let		neededEvaluations = Math.ceil(remaining / CONVERSION_RATE);
+	if (evaluationPoints > 4)
+		neededEvaluations -= evaluationPoints - 4;
+	const	progress = target > 0 ? Math.min((current / target) * 100, 100) : 100;
 
-	return { remaining, neededEvaluations, progress }
+	return { remaining, neededEvaluations, progress };
 }
 
 export default function WalletDashboardClient({ initialStudent, initialTarget, streak }: { initialStudent: Student; initialTarget: number; streak: number }) {
@@ -48,7 +49,7 @@ export default function WalletDashboardClient({ initialStudent, initialTarget, s
 		}
 	}
 
-	const { remaining, neededEvaluations, progress } = useMemo(() => computeGoal(student.wallet, target), [target, student]);
+	const { remaining, neededEvaluations, progress } = useMemo(() => computeGoal(student.wallet, target, student.evaluationPoints), [target, student]);
 
 	return (
 		<div className="relative min-h-screen w-full overflow-hidden bg-linear-to-br from-[#0a0b10] via-[#0f0f1a] to-[#1a0f0f] text-white">
