@@ -12,6 +12,7 @@ function computeGoal(current: number, target: number, evaluationPoints: number) 
 	let		neededEvaluations = Math.ceil(remaining / CONVERSION_RATE);
 	if (evaluationPoints > 4)
 		neededEvaluations -= evaluationPoints - 4;
+	neededEvaluations = neededEvaluations < 0 ? 0 : neededEvaluations;
 	const	progress = target > 0 ? Math.min((current / target) * 100, 100) : 100;
 
 	return { remaining, neededEvaluations, progress };
